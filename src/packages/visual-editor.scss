@@ -40,7 +40,6 @@ $primary: #409eff;
         left: $menuSize;
         right: $operatorSize;
         height: $headSize;
-        background-color: #409fee;
     }
     & > .visual-editor-operator {
         position: absolute;
@@ -48,19 +47,30 @@ $primary: #409eff;
         top: 0;
         bottom: 0;
         width: $operatorSize;
-        background-color: #314659;
+        background-color: white;
     }
     & > .visual-editor-body {
+        position: relative;
         padding-top: $headSize;
         padding-left: $menuSize;
         padding-right: $operatorSize;
         box-sizing: border-box;
-        background-color: skyblue;
+        background-color: rgba(white,0.3);
         height: 100%;
+        z-index: 1;
         & > .visual-editor-content {
+            position: relative;
+            display: flex;
+            justify-content: center;
             width: 100%;
             height: 100%;
-            overflow: scroll;
+            & > .visual-editor-container{
+                position: relative;
+                background-color: white;
+                & > .visual-editor-block{
+                    position: absolute;
+                }
+            }
         }
     }
    
