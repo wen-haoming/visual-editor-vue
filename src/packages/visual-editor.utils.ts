@@ -1,4 +1,5 @@
 export interface VisurlEditorBlockData {
+    componentKey: string;
     top: number;
     left: number;
 }

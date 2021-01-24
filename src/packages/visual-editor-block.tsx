@@ -1,10 +1,11 @@
 import { computed, defineComponent, PropType } from 'vue'
-import {VisurlEditorBlockData} from '@/packages/visual-editor.utils'
+import {VisualEditorConfig, VisurlEditorBlockData} from '@/packages/visual-editor.utils'
 
 
 export const VisualEditorBlock = defineComponent({
     props:{
-        block:{type:Object as PropType<VisurlEditorBlockData>, requried:true }
+        block:{type:Object as PropType<VisurlEditorBlockData>, requried:true },
+        config:{type:Object as PropType<VisualEditorConfig>,required:true}
     },
     setup(props){
 
@@ -14,8 +15,14 @@ export const VisualEditorBlock = defineComponent({
         }))
         
         return ()=>{
+
+            const component = props.config.componentMap[props.block!.componentKey]
+            console.log(props,'===');
+            
+            const Render = component.render()
+
             return <div class="visual-editor-block" style={styles.value}>
-                这个是一条block
+                {Render}
             </div>
         }
     }
