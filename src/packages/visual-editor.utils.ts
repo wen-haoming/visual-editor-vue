@@ -1,7 +1,8 @@
 export interface VisurlEditorBlockData {
-    componentKey: string;
-    top: number;
-    left: number;
+    componentKey: string;  // 映射 VisualEditorConfig 中 componentMap 中的 component 对象
+    top: number;  //组件top定位
+    left: number;  // 组件left定位
+    adjustPosition: boolean;  // 是否需要调整位置
 }
 
 export interface VisualEditorModelValue {

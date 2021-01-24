@@ -1,4 +1,4 @@
-import { computed, defineComponent, PropType } from 'vue'
+import { computed, defineComponent, onMounted, PropType, ref } from 'vue'
 import {VisualEditorConfig, VisurlEditorBlockData} from '@/packages/visual-editor.utils'
 
 
@@ -8,20 +8,28 @@ export const VisualEditorBlock = defineComponent({
         config:{type:Object as PropType<VisualEditorConfig>,required:true}
     },
     setup(props){
-
+        const el = ref({} as HTMLDivElement )
         const styles = computed(()=>({
             top:`${props.block?.top}px`,
             left:`${props.block?.left}px`,
         }))
+
+        onMounted(()=>{
+            const block = props.block
+            if(block?.adjustPosition === true){
+                // 添加组件位置自动居中
+                const {offsetWidth,offsetHeight} = el.value
+                block.left = block.left - offsetWidth / 2
+                block.top = block.top - offsetHeight / 2
+                block.adjustPosition = false
+            }
+        })
         
         return ()=>{
-
-            const component = props.config.componentMap[props.block!.componentKey]
-            console.log(props,'===');
+            const component = props.config.componentMap[props.block!.componentKey] 
             
             const Render = component.render()
-
-            return <div class="visual-editor-block" style={styles.value}>
+            return <div class="visual-editor-block" style={styles.value} ref={el}>
                 {Render}
             </div>
         }
