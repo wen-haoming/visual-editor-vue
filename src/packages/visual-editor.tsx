@@ -1,6 +1,6 @@
 import { computed, defineComponent, PropType, ref } from 'vue'
 import './visual-editor.scss'
-import { VisualEditorComponent, VisualEditorConfig, VisualEditorModelValue } from '@/packages/visual-editor.utils'
+import { VisualEditorComponent, VisualEditorConfig, VisualEditorModelValue, createNewBlock, VisurlEditorBlockData } from '@/packages/visual-editor.utils'
 import { useModel } from './utils/useModel'
 import { VisualEditorBlock } from './visual-editor-block'
 
@@ -50,12 +50,11 @@ export const VisualEditor = defineComponent({
                 // 容器中释放鼠标的时候触发
                 drop: (e: DragEvent) => {
                     const blocks = dataModel.value.blocks || []
-                    blocks.push({
-                        top: e.offsetY,
+                    blocks.push(createNewBlock({
+                        component: component!,
                         left: e.offsetX,
-                        componentKey: component!.key,
-                        adjustPosition:true
-                    })
+                        top: e.offsetY
+                    }))
                     dataModel.value = {
                         ...dataModel.value,
                         blocks
@@ -82,6 +81,26 @@ export const VisualEditor = defineComponent({
                 }
             }
             return blockHandler
+        })()
+
+
+        const focusHandler = (() => {
+            return {
+                container: {
+                    onMousedown(e: MouseEvent) {
+                        e.stopPropagation();
+                        (dataModel.value.blocks || []).forEach(block => block.focus = false)
+
+                    }
+                },
+                block: {
+                    onMousedown(e: MouseEvent, block: VisurlEditorBlockData) {
+                        e.stopPropagation();
+                        block.focus = !block.focus
+
+                    }
+                }
+            }
         })()
 
         return () => {
@@ -111,10 +130,22 @@ export const VisualEditor = defineComponent({
                     </div>
                     <div class="visual-editor-body">
                         <div class="visual-editor-content">
-                            <div class="visual-editor-container" style={containerStyles.value} ref={containerRef}>
+                            <div
+                                class="visual-editor-container"
+                                style={containerStyles.value}
+                                ref={containerRef}
+                                {...focusHandler.container}
+                            >
                                 {
                                     dataModel.value.blocks.map((block, index) => {
-                                        return <VisualEditorBlock config={props.config} block={block} key={index} />
+                                        return <VisualEditorBlock
+                                            config={props.config}
+                                            block={block}
+                                            key={index}
+                                            {...{
+                                                onMousedown(e: MouseEvent) { focusHandler.block.onMousedown(e, block) }
+                                            }}
+                                        />
                                     })
                                 }
                             </div>

@@ -3,6 +3,7 @@ export interface VisurlEditorBlockData {
     top: number;  //组件top定位
     left: number;  // 组件left定位
     adjustPosition: boolean;  // 是否需要调整位置
+    focus: boolean; // 当前是否为选中状态
 }
 
 export interface VisualEditorModelValue {
@@ -20,10 +21,27 @@ export interface VisualEditorComponent {
     render: () => JSX.Element;
 }
 
+export function createNewBlock({
+    component,
+    left,
+    top
+}: {
+    component: VisualEditorComponent;
+    left: number;
+    top: number;
+}) {
+    return {
+        top,
+        left,
+        componentKey: component!.key,
+        adjustPosition: true,
+        focus: false
+    }
+}
+
 export function createVisualEditorConfig() {
     const componentList: VisualEditorComponent[] = []
     const componentMap: Record<string, VisualEditorComponent> = {}
-
 
     return {
         componentList,
