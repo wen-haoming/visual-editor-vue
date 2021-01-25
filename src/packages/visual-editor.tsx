@@ -29,6 +29,17 @@ export const VisualEditor = defineComponent({
             height: `${dataModel.value.container.height}px`
         }))
 
+        const methods = {
+            clearFoucs: (block?: VisurlEditorBlockData) => {
+                let blocks = (dataModel.value.blocks || [])
+                if (blocks.length === 0) return
+                if (blocks) {
+                    blocks = blocks.filter(item => item !== block)
+                }
+                blocks.forEach(block => block.focus = false)
+            }
+        }
+
         const menuDraggier = (() => {
             let component = null as null | VisualEditorComponent
             /**
@@ -66,6 +77,7 @@ export const VisualEditor = defineComponent({
              */
             const blockHandler = {
                 dragstart: (e: DragEvent, current: VisualEditorComponent) => {
+                    console.log(e);
                     containerRef.value.addEventListener('dragenter', containerHandler.dragenter)
                     containerRef.value.addEventListener('dragover', containerHandler.drageover)
                     containerRef.value.addEventListener('dragleave', containerHandler.dragleave)
@@ -73,6 +85,7 @@ export const VisualEditor = defineComponent({
                     component = current
                 },
                 dragend: (e: DragEvent) => {
+                    console.log(e);
                     containerRef.value.removeEventListener('dragenter', containerHandler.dragenter)
                     containerRef.value.removeEventListener('dragover', containerHandler.drageover)
                     containerRef.value.removeEventListener('dragleave', containerHandler.dragleave)
@@ -89,14 +102,21 @@ export const VisualEditor = defineComponent({
                 container: {
                     onMousedown(e: MouseEvent) {
                         e.stopPropagation();
-                        (dataModel.value.blocks || []).forEach(block => block.focus = false)
+                        e.preventDefault();
+                        methods.clearFoucs()
 
                     }
                 },
                 block: {
                     onMousedown(e: MouseEvent, block: VisurlEditorBlockData) {
                         e.stopPropagation();
-                        block.focus = !block.focus
+                        e.preventDefault();
+                        if (e.shiftKey) {
+                            block.focus = !block.focus
+                        } else {
+                            block.focus = true
+                            methods.clearFoucs(block)
+                        }
 
                     }
                 }

@@ -33,7 +33,7 @@ export function createNewBlock({
     return {
         top,
         left,
-        componentKey: component!.key,
+        componentKey: component?.key,
         adjustPosition: true,
         focus: false
     }
