@@ -3,6 +3,7 @@ import './visual-editor.scss'
 import { VisualEditorComponent, VisualEditorConfig, VisualEditorModelValue, createNewBlock, VisurlEditorBlockData } from '@/packages/visual-editor.utils'
 import { useModel } from './utils/useModel'
 import { VisualEditorBlock } from './visual-editor-block'
+import { useVisualCommand } from './utils/visual.command'
 
 
 export const VisualEditor = defineComponent({
@@ -182,7 +183,13 @@ export const VisualEditor = defineComponent({
             }
         })()
 
+        const commander = useVisualCommand()
 
+        const  buttons = [
+            {label:'撤销',icon:'icon-back',handler:commander.undo,tip:'ctrl+z'},
+            {label:'重做',icon:'icon-forward',handler:commander.redo,tip:'ctrl+shift+z'},
+            // {label:'删除',icon:'icon-delete',handler:()=>commander.delete(),tip:'ctrl+d, backspace, delete'},
+        ]
 
         return () => {
             return <>
@@ -204,7 +211,7 @@ export const VisualEditor = defineComponent({
                         }
                     </div>
                     <div class="visual-editor-head">
-                        head
+                        
                     </div>
                     <div class="visual-editor-operator">
                         operator
@@ -232,7 +239,6 @@ export const VisualEditor = defineComponent({
                             </div>
                         </div>
                     </div>
-
                 </div>
             </>
         }
