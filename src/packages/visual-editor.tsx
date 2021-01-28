@@ -75,6 +75,7 @@ export const VisualEditor = defineComponent({
                 drop: (e: DragEvent) => {
                     const blocks = dataModel.value.blocks || []
                     blocks.push(createNewBlock({
+                        /** 在mousedown的时候 component 已经被赋值了 */
                         component: component as VisualEditorComponent,
                         left: e.offsetX,
                         top: e.offsetY

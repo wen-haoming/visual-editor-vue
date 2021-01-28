@@ -32,9 +32,7 @@ export const VisualEditorBlock = defineComponent({
                 block.adjustPosition = false
             }
         })
-
-
-
+        
         return () => {
             
             const component = props.config.componentMap[props.block!.componentKey]

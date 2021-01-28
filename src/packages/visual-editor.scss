@@ -36,8 +36,9 @@ $primary: #409eff;
         & > .visual-editor-menu-item {
             display: flex;
             position: relative;
-            width: calc(100%-20px);
+            width: calc(100%-40px);
             margin-left: 10px;
+            margin-right: 10px;
             border: solid 3px $ibc;
             margin-top: 20px;
             min-height: 120px;
