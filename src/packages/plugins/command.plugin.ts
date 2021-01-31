@@ -1,4 +1,5 @@
-import {reactive, onUnmounted} from 'vue'
+import { reactive, onUnmounted } from 'vue'
+import { KeyboardCode } from './keyboard-code'
 
 export interface CommandExecute {
     undo?: () => void,
@@ -32,24 +33,59 @@ export function useCommander() {
     const registry = (command: Command) => {
         state.commandArray.push(command)
         state.commands[command.name] = (...args) => {
-            const {undo, redo} = command.execute(...args)
+            const { undo, redo } = command.execute(...args)
             redo()
             /*如果命令执行之后，不需要进入命令队列，则直接结束*/
             if (command.followQueue === false) {
                 return
             }
             /*否则，将命令队列中剩余的命令去除，保留current及其之前的命令*/
-            let {queue, current} = state
+            let { queue, current } = state
             if (queue.length > 0) {
                 queue = queue.slice(0, current + 1)
                 state.queue = queue
             }
             /*设置命令队列中最后一个命令为当前执行的命令*/
-            queue.push({undo, redo})
+            queue.push({ undo, redo })
             /*索引+1，指向队列中的最后一个命令*/
             state.current = current + 1;
         }
     }
+
+    const keyboardEvent = (() => {
+
+        const onKeydown = (e: KeyboardEvent) => {
+            if (document.activeElement !== document.body) {
+                return
+            }
+            const { keyCode, shiftKey, altKey, ctrlKey, metaKey } = e
+            let keyString: string[] = [];
+            if (ctrlKey || metaKey) keyString.push('ctrl')
+            if (shiftKey) keyString.push('shift')
+            if (altKey) keyString.push('alt')
+            keyString.push(KeyboardCode[keyCode])
+            const keyNames = keyString.join('+')
+           state.commandArray.forEach(({keyboard,name})=>{
+                if(!keyboard){
+                    return 
+                }
+                const keys = Array.isArray(keyboard)?keyboard : [keyboard]
+                if(keys.indexOf(keyNames) > -1){
+                    state.commands[name]()
+                    e.stopPropagation()
+                    e.preventDefault()
+                }                
+           })
+
+        }
+
+        const init = () => {
+            window.addEventListener('keydown', onKeydown)
+            return () => window.removeEventListener('keydown', onKeydown)
+
+        }
+        return init
+    })()
 
     /**
      * useCommander初始化函数，负责初始化键盘监听事件，调用命令的初始化逻辑
@@ -57,12 +93,9 @@ export function useCommander() {
      * @date    2021/1/22 11:35 下午
      */
     const init = () => {
-        const onKeydown = (e: KeyboardEvent) => {
-            // console.log('监听到键盘时间')
-        }
-        window.addEventListener('keydown', onKeydown)
+
         state.commandArray.forEach(command => !!command.init && state.destroyList.push(command.init()))
-        state.destroyList.push(() => window.removeEventListener('keydown', onKeydown))
+        state.destroyList.push(keyboardEvent())
     }
 
     /**
@@ -101,7 +134,7 @@ export function useCommander() {
         keyboard: [
             'ctrl+y',
             'ctrl+shift+z',
-        ], 
+        ],
         followQueue: false,
         execute: () => {
             return {
