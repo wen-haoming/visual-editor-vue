@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
@@ -33,9 +34,6 @@
     "tests/**/*.ts",
     "tests/**/*.tsx"
   ],
-  "rules":{
-    "@typescript-eslint/no-non-null-assertion": 0,
-  },
   "exclude": [
     "node_modules"
   ]

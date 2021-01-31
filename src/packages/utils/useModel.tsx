@@ -1,5 +1,6 @@
 import { defineComponent, ref, watch } from 'vue'
 
+
 export function useModel<T>(getter: () => T, emitter: (val: T) => void) {
     const state = ref(getter()) as { value: T }
 
