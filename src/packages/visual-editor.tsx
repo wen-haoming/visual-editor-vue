@@ -206,6 +206,7 @@ export const VisualEditor = defineComponent({
             { label: '撤销', icon: 'icon-back', handler: commander.undo, tip: 'ctrl+z' },
             { label: '重做', icon: 'icon-forward', handler: commander.redo, tip: 'ctrl+y, ctrl+shift+z' },
             { label: '删除', icon: 'icon-delete', handler: () => commander.delete(), tip: 'ctrl+d, backspace, delete' },
+            { label: '清空', icon: 'icon-reset', handler: () => commander.clear(), tip: 'ctrl+d, backspace, delete' },
         ]
 
         return () => (
