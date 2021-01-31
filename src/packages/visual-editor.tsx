@@ -1,4 +1,4 @@
-import {defineComponent, PropType, computed, ref} from 'vue';
+import { defineComponent, PropType, computed, ref } from 'vue';
 import './visual-editor.scss'
 import {
     createNewBlock,
@@ -7,15 +7,15 @@ import {
     VisualEditorConfig,
     VisualEditorModelValue
 } from "@/packages/visual-editor.utils";
-import {useModel} from "@/packages/utils/useModel";
-import {VisualEditorBlock} from "@/packages/visual-editor-block";
-import {useVisualCommand} from "@/packages/utils/visual.command";
-import {createEvent} from "@/packages/plugins/event";
+import { useModel } from "@/packages/utils/useModel";
+import { VisualEditorBlock } from "@/packages/visual-editor-block";
+import { useVisualCommand } from "@/packages/utils/visual.command";
+import { createEvent } from "@/packages/plugins/event";
 
 export const VisualEditor = defineComponent({
     props: {
-        modelValue: {type: Object as PropType<VisualEditorModelValue>, required: true},
-        config: {type: Object as PropType<VisualEditorConfig>, required: true},
+        modelValue: { type: Object as PropType<VisualEditorModelValue>, required: true },
+        config: { type: Object as PropType<VisualEditorConfig>, required: true },
     },
     emits: {
         'update:modelValue': (val?: VisualEditorModelValue) => true,
@@ -59,7 +59,7 @@ export const VisualEditor = defineComponent({
                 blocks.forEach(block => block.focus = false)
             },
             updateBlocks: (blocks: VisualEditorBlockData[]) => {
-                dataModel.value = {...dataModel.value, blocks,}
+                dataModel.value = { ...dataModel.value, blocks, }
             },
         }
 
@@ -99,7 +99,7 @@ export const VisualEditor = defineComponent({
                 /*子啊容器中放置的时候，荣国事件对象的 offsetX，和offsetY添加一条组件数据*/
                 drop: (e: DragEvent) => {
                     const blocks = [...dataModel.value.blocks || []]
-                    blocks.push(createNewBlock({component: component!, top: e.offsetY, left: e.offsetX,}))
+                    blocks.push(createNewBlock({ component: component!, top: e.offsetY, left: e.offsetX, }))
                     methods.updateBlocks(blocks)
                     dragend.emit()
                 },
@@ -112,16 +112,22 @@ export const VisualEditor = defineComponent({
             return {
                 container: {
                     onMousedown: (e: MouseEvent) => {
-                        // e.stopPropagation()
                         e.preventDefault()
-                        /*点击空白处，清空所有选中的block*/
-                        methods.clearFocus()
+                        if (e.currentTarget !== e.target) {
+                            
+                            return
+                        }
+                        if (!e.shiftKey) {
+                            /*点击空白处，清空所有选中的block*/
+                            methods.clearFocus()
+                        }
+
                     },
                 },
                 block: {
                     onMousedown: (e: MouseEvent, block: VisualEditorBlockData) => {
-                        e.stopPropagation()
-                        e.preventDefault()
+                        // e.stopPropagation()
+                        // e.preventDefault()
                         if (e.shiftKey) {
                             /*如果摁住了shift键，如果此时没有选中的block，就选中这个block，否则令这个block的选中状态去翻*/
                             if (focusData.value.focus.length <= 1) {
@@ -156,7 +162,7 @@ export const VisualEditor = defineComponent({
                 dragState = {
                     startX: e.clientX,
                     startY: e.clientY,
-                    startPos: focusData.value.focus.map(({top, left}) => ({top, left})),
+                    startPos: focusData.value.focus.map(({ top, left }) => ({ top, left })),
                     dragging: false,
                 }
                 document.addEventListener('mousemove', mousemove)
@@ -177,6 +183,7 @@ export const VisualEditor = defineComponent({
             }
 
             const mouseup = () => {
+               
                 document.removeEventListener('mousemove', mousemove)
                 document.removeEventListener('mouseup', mouseup)
                 if (dragState.dragging) {
@@ -184,7 +191,7 @@ export const VisualEditor = defineComponent({
                 }
             }
 
-            return {mousedown}
+            return { mousedown }
         })();
 
         const commander = useVisualCommand({
@@ -196,9 +203,9 @@ export const VisualEditor = defineComponent({
         })
 
         const buttons = [
-            {label: '撤销', icon: 'icon-back', handler: commander.undo, tip: 'ctrl+z'},
-            {label: '重做', icon: 'icon-forward', handler: commander.redo, tip: 'ctrl+y, ctrl+shift+z'},
-            {label: '删除', icon: 'icon-delete', handler: () => commander.delete(), tip: 'ctrl+d, backspace, delete'},
+            { label: '撤销', icon: 'icon-back', handler: commander.undo, tip: 'ctrl+z' },
+            { label: '重做', icon: 'icon-forward', handler: commander.redo, tip: 'ctrl+y, ctrl+shift+z' },
+            { label: '删除', icon: 'icon-delete', handler: () => commander.delete(), tip: 'ctrl+d, backspace, delete' },
         ]
 
         return () => (
@@ -206,9 +213,9 @@ export const VisualEditor = defineComponent({
                 <div class="visual-editor-menu">
                     {props.config.componentList.map(component => (
                         <div class="visual-editor-menu-item"
-                             draggable
-                             onDragend={menuDraggier.dragend}
-                             onDragstart={(e) => menuDraggier.dragstart(e, component)}>
+                            draggable
+                            onDragend={menuDraggier.dragend}
+                            onDragstart={(e) => menuDraggier.dragstart(e, component)}>
                             <span class="visual-editor-menu-item-label">{component.label}</span>
                             {component.preview()}
                         </div>
@@ -218,11 +225,11 @@ export const VisualEditor = defineComponent({
                     {buttons.map((btn, index) => (
                         <el-tooltip effect="dark" content={btn.tip} placement="bottom">
                             <div key={index} class="visual-editor-head-button" onClick={btn.handler}>
-                            <i class={`iconfont ${btn.icon}`}/>
-                            <span>{btn.label}</span>
-                        </div>
+                                <i class={`iconfont ${btn.icon}`} />
+                                <span>{btn.label}</span>
+                            </div>
                         </el-tooltip>
-                        )
+                    )
                     )}
                 </div>
                 <div class="visual-editor-operator">
@@ -231,9 +238,9 @@ export const VisualEditor = defineComponent({
                 <div class="visual-editor-body">
                     <div class="visual-editor-content">
                         <div class="visual-editor-container"
-                             style={containerStyles.value}
-                             ref={containerRef}
-                             {...focusHandler.container}
+                            style={containerStyles.value}
+                            ref={containerRef}
+                            {...focusHandler.container}
                         >
                             {!!dataModel.value.blocks && (
                                 dataModel.value.blocks.map((block, index) => (
