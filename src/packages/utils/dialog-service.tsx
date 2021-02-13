@@ -90,7 +90,7 @@ const DialogService = (() => {
             const app = createApp(ServiceComponent, {option})
             ins = app.mount(el)
         }
-        ins.service(option)
+        ins. service(option)
     }
 })();
 
